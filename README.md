@@ -1,70 +1,127 @@
-# Getting Started with Create React App
+# ⚛️ Frontend React - Dinâmicas de Equipe
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Este projeto é uma interface web desenvolvida com **React**, **Redux Toolkit** e **JavaScript (ES6+)** que desenvolvi como parte de um desafio para a Gigalink. Ele consome os dados da API Rails chamada **[`dinamica_de_equipe_api`](https://github.com/guerrinharj/dinamica_de_equipe_api)**.  
+A aplicação permite o gerenciamento de **dinâmicas de equipe** com a possibilidade de avaliar cada uma delas.
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+## 📦 Tecnologias utilizadas
 
-### `npm start`
+- React (Vite ou CRA)
+- Redux Toolkit
+- React Router
+- JavaScript (ES6+)
+- CSS3
+- [`dinamica_de_equipe_api`](https://github.com/guerrinharj/dinamica_de_equipe_api) (API Ruby on Rails)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+---
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## 🧠 Objetivo do projeto
 
-### `npm test`
+Criar uma aplicação SPA moderna que consuma a API REST `dinamica_de_equipe_api` e permita ao usuário:
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- Visualizar todas as dinâmicas cadastradas.
+- Criar novas dinâmicas.
+- Editar ou excluir dinâmicas existentes com confirmação.
+- Avaliar cada dinâmica com um comentário e uma nota de 1 a 5.
+- Visualizar uma dinâmica aleatória com um botão no menu.
 
-### `npm run build`
+---
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## 🖼️ Funcionalidades da interface
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Página inicial (`/`)
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- ✅ Lista todas as dinâmicas cadastradas.
+- ✅ Mostra o **nome**, **descrição**, **participantes** e **avaliação média**.
+- ✅ Botão para **exibir uma dinâmica aleatória** (com `alert`).
+- ✅ Botão para **adicionar nova dinâmica**.
+- ✅ Botões para **editar** ou **remover** uma dinâmica existente (com confirmação).
 
-### `npm run eject`
+### Página de adicionar/editar dinâmica (`/nova` e `/editar/:id`)
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+- ✅ Formulário para preencher os campos:
+  - Nome da dinâmica
+  - Descrição da dinâmica
+  - Lista de participantes (separados por vírgula)
+- ✅ Campos adicionais para:
+  - Comentário da avaliação
+  - Nota (de 1 a 5)
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+> Se um review for preenchido, ele será salvo automaticamente junto com a dinâmica.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### Página exclusiva para adicionar um review (`/review`)
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+- ✅ Permite ao usuário enviar uma avaliação **sem precisar editar a dinâmica**.
+- ✅ Mostra um menu dropdown com todas as dinâmicas disponíveis.
+- ✅ Permite preencher:
+  - Comentário (opcional)
+  - Nota (opcional, entre 1 e 5)
+- ✅ Caso nenhum campo seja preenchido, a requisição não é enviada.
 
-## Learn More
+> Essa página é ideal para permitir que usuários façam reviews em dinâmicas já cadastradas, sem modificar seus dados.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+---
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## 🧱 Estrutura de diretórios
 
-### Code Splitting
+```bash
+src/
+├── app/                    # Store Redux global
+│   └── store.js
+├── components/             # Componentes reutilizáveis
+│   ├── Button.jsx
+│   ├── InputField.jsx
+│   ├── TextArea.jsx
+│   └── FormWrapper.jsx
+├── features/               # Slices de Redux
+│   ├── dinamicas/
+│   │   └── dinamicasSlice.js
+│   └── reviews/
+│       └── reviewsSlice.js
+├── pages/                  # Páginas da aplicação
+│   ├── Home.jsx
+│   ├── NovaDinamica.jsx
+│   └── AdicionarReview.jsx
+├── services/               # Conexão com API (axios)
+│   └── api.js
+├── App.jsx                 # Rotas + menu
+└── index.js                # Entrada principal + Provider Redux
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## 🔌 Comunicação com a API
 
-### Analyzing the Bundle Size
+Todos os dados são consumidos da API dinamica_de_equipe_api, que deve estar rodando em:
+```bash
+http://localhost:3000/api/
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+Endpoints utilizados:
 
-### Making a Progressive Web App
+```bash
+| Ação                     | Método | URL                                   |
+|--------------------------|--------|----------------------------------------|
+| Listar dinâmicas         | GET    | `/api/dinamicas`                      |
+| Criar dinâmica           | POST   | `/api/dinamicas`                      |
+| Atualizar dinâmica       | PATCH  | `/api/dinamicas/:id`                 |
+| Excluir dinâmica         | DELETE | `/api/dinamicas/:id`                 |
+| Ver dinâmica aleatória   | GET    | `/api/dinamicas/aleatoria`           |
+| Criar avaliação (review) | POST   | `/api/dinamicas/:id/reviews`         |
+| Listar participantes     | GET    | `/api/participantes`                 |
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+---
+```
 
-### Advanced Configuration
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+## Como rodar o Projeto
 
-### Deployment
+Clone este repositório.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+Inicie a API dinamica_de_equipe_api (ela deve estar rodando em localhost:3000).
 
-### `npm run build` fails to minify
+Execute o frontend com:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+```bash
+npm install
+npm start
+```
