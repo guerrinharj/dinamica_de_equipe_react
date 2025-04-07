@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import api from '../services/api';
 import { useNavigate } from 'react-router-dom';
+import api from '../services/api';
+import InputField from '../components/InputField';
+import TextArea from '../components/TextArea';
+import Button from '../components/Button';
+import FormWrapper from '../components/FormWrapper';
 
 const AdicionarReview = () => {
     const [dinamicas, setDinamicas] = useState([]);
@@ -18,47 +22,64 @@ const AdicionarReview = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!dinamicaId) return alert('Selecione uma dinâmica.');
+        if (!dinamicaId || (!comentario && !nota)) {
+            alert("Por favor, selecione uma dinâmica e preencha ao menos um campo.");
+            return;
+        }
 
         try {
             await api.post(`/dinamicas/${dinamicaId}/reviews`, {
-                review: { comentario, nota: parseInt(nota) }
+                review: {
+                    comentario: comentario.trim(),
+                    nota: nota ? parseInt(nota) : null
+                }
             });
-            alert('Review adicionada!');
+
+            alert('Review enviada com sucesso!');
             navigate('/');
         } catch (err) {
             console.error(err);
-            alert('Erro ao adicionar review.');
+            alert('Erro ao enviar review.');
         }
     };
 
     return (
-        <div>
-            <h1>Adicionar Review</h1>
-            <form onSubmit={handleSubmit}>
+        <FormWrapper title="Adicionar Review">
+            <div style={{ marginBottom: '16px' }}>
                 <label>Dinâmica:</label><br />
-                <select value={dinamicaId} onChange={(e) => setDinamicaId(e.target.value)} required>
-                    <option value="">-- Selecione --</option>
+                <select
+                    value={dinamicaId}
+                    onChange={(e) => setDinamicaId(e.target.value)}
+                    required
+                    style={{ padding: "10px", width: "100%" }}
+                >
+                    <option value="">-- Selecione uma dinâmica --</option>
                     {dinamicas.map((d) => (
                         <option key={d.id} value={d.id}>{d.nome}</option>
                     ))}
-                </select><br />
+                </select>
+            </div>
 
-                <label>Comentário:</label><br />
-                <textarea value={comentario} onChange={(e) => setComentario(e.target.value)} /><br />
+            <TextArea
+                label="Comentário"
+                value={comentario}
+                onChange={(e) => setComentario(e.target.value)}
+                placeholder="Digite seu comentário..."
+            />
 
-                <label>Nota (1 a 5):</label><br />
-                <input
-                    type="number"
-                    min="1"
-                    max="5"
-                    value={nota}
-                    onChange={(e) => setNota(e.target.value)}
-                /><br /><br />
+            <InputField
+                label="Nota (1 a 5)"
+                type="number"
+                value={nota}
+                onChange={(e) => setNota(e.target.value)}
+                min={1}
+                max={5}
+                placeholder="Deixe em branco se não quiser avaliar"
+            />
 
-                <button type="submit">Salvar</button>
-            </form>
-        </div>
+            <Button type="submit" onClick={handleSubmit}>Salvar Review</Button>
+            <Button onClick={() => navigate('/')}>Cancelar</Button>
+        </FormWrapper>
     );
 };
 
