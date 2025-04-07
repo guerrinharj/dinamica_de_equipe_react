@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import api from '../services/api';
+import InputField from '../components/InputField';
+import TextArea from '../components/TextArea';
+import Button from '../components/Button';
+import FormWrapper from '../components/FormWrapper';
 
 const NovaDinamica = () => {
     const [nome, setNome] = useState('');
     const [descricao, setDescricao] = useState('');
     const [participantes, setParticipantes] = useState('');
     const navigate = useNavigate();
-    const { id } = useParams(); // null para criar, ou id para editar
+    const { id } = useParams();
 
     useEffect(() => {
         if (id) {
@@ -47,21 +51,31 @@ const NovaDinamica = () => {
     };
 
     return (
-        <div>
-            <h1>{id ? 'Editar Dinâmica' : 'Nova Dinâmica'}</h1>
-            <form onSubmit={handleSubmit}>
-                <label>Nome:</label><br />
-                <input value={nome} onChange={(e) => setNome(e.target.value)} required /><br />
-
-                <label>Descrição:</label><br />
-                <textarea value={descricao} onChange={(e) => setDescricao(e.target.value)} required /><br />
-
-                <label>Participantes (separados por vírgula):</label><br />
-                <input value={participantes} onChange={(e) => setParticipantes(e.target.value)} /><br /><br />
-
-                <button type="submit">{id ? 'Atualizar' : 'Salvar'}</button>
-            </form>
-        </div>
+        <FormWrapper title={id ? 'Editar Dinâmica' : 'Nova Dinâmica'}>
+            <InputField
+                label="Nome"
+                value={nome}
+                onChange={(e) => setNome(e.target.value)}
+                required
+            />
+            <TextArea
+                label="Descrição"
+                value={descricao}
+                onChange={(e) => setDescricao(e.target.value)}
+                required
+            />
+            <InputField
+                label="Participantes (separados por vírgula)"
+                value={participantes}
+                onChange={(e) => setParticipantes(e.target.value)}
+            />
+            <Button type="submit" onClick={handleSubmit}>
+                {id ? "Atualizar" : "Salvar"}
+            </Button>
+            <Button onClick={() => navigate('/')}>
+                Cancelar
+            </Button>
+        </FormWrapper>
     );
 };
 
